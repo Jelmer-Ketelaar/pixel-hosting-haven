@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import PricingCard from './PricingCard';
+import Button from './Button';
 import { Database, Globe, Server } from 'lucide-react';
 
 const ServerPricing: React.FC = () => {

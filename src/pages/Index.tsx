@@ -4,6 +4,7 @@ import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import ServerPricing from '@/components/ServerPricing';
 import Features from '@/components/Features';
+import ServerControl from '@/components/ServerControl';
 import Testimonials from '@/components/Testimonials';
 import ContactSection from '@/components/ContactSection';
 import Footer from '@/components/Footer';
@@ -43,6 +44,7 @@ const Index: React.FC = () => {
       <main>
         <Hero />
         <ServerPricing />
+        <ServerControl />
         <Features />
         <Testimonials />
         <ContactSection />
