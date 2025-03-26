@@ -6,6 +6,16 @@ import { ExternalLink, Github, Instagram, Twitter } from 'lucide-react';
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
   
+  const scrollToSection = (sectionId: string) => {
+    const section = document.getElementById(sectionId);
+    if (section) {
+      window.scrollTo({
+        top: section.offsetTop - 80,
+        behavior: 'smooth'
+      });
+    }
+  };
+  
   return (
     <footer className="bg-secondary/50 pt-16 pb-8">
       <div className="container mx-auto max-w-7xl px-6 md:px-8">
@@ -34,24 +44,36 @@ const Footer: React.FC = () => {
             <h4 className="font-semibold text-lg mb-4">Products</h4>
             <ul className="space-y-2">
               <li>
-                <Link to="/" className="text-muted-foreground hover:text-primary transition-colors">
+                <button 
+                  onClick={() => scrollToSection('pricing')} 
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
                   Minecraft Hosting
-                </Link>
+                </button>
               </li>
               <li>
-                <Link to="/" className="text-muted-foreground hover:text-primary transition-colors">
+                <button 
+                  onClick={() => scrollToSection('pricing')} 
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
                   Modded Servers
-                </Link>
+                </button>
               </li>
               <li>
-                <Link to="/" className="text-muted-foreground hover:text-primary transition-colors">
+                <button 
+                  onClick={() => scrollToSection('pricing')} 
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
                   BungeeCord
-                </Link>
+                </button>
               </li>
               <li>
-                <Link to="/" className="text-muted-foreground hover:text-primary transition-colors">
+                <button 
+                  onClick={() => scrollToSection('pricing')} 
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
                   Game Servers
-                </Link>
+                </button>
               </li>
             </ul>
           </div>
@@ -60,19 +82,28 @@ const Footer: React.FC = () => {
             <h4 className="font-semibold text-lg mb-4">Resources</h4>
             <ul className="space-y-2">
               <li>
-                <Link to="/" className="text-muted-foreground hover:text-primary transition-colors">
+                <button 
+                  onClick={() => scrollToSection('features')} 
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
                   Documentation
-                </Link>
+                </button>
               </li>
               <li>
-                <Link to="/" className="text-muted-foreground hover:text-primary transition-colors">
+                <button 
+                  onClick={() => scrollToSection('features')} 
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
                   Knowledgebase
-                </Link>
+                </button>
               </li>
               <li>
-                <Link to="/" className="text-muted-foreground hover:text-primary transition-colors">
+                <button 
+                  onClick={() => scrollToSection('features')} 
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
                   Server Status
-                </Link>
+                </button>
               </li>
               <li>
                 <a href="#" className="text-muted-foreground hover:text-primary transition-colors inline-flex items-center">
@@ -87,22 +118,28 @@ const Footer: React.FC = () => {
             <h4 className="font-semibold text-lg mb-4">Company</h4>
             <ul className="space-y-2">
               <li>
-                <Link to="/" className="text-muted-foreground hover:text-primary transition-colors">
+                <button 
+                  onClick={() => scrollToSection('features')} 
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
                   About Us
-                </Link>
+                </button>
               </li>
               <li>
-                <Link to="/" className="text-muted-foreground hover:text-primary transition-colors">
+                <button 
+                  onClick={() => scrollToSection('contact')} 
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
                   Contact
-                </Link>
+                </button>
               </li>
               <li>
-                <Link to="/" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/terms" className="text-muted-foreground hover:text-primary transition-colors">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link to="/" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/terms" className="text-muted-foreground hover:text-primary transition-colors">
                   Terms of Service
                 </Link>
               </li>
@@ -116,13 +153,13 @@ const Footer: React.FC = () => {
               © {currentYear} PixelHost. All rights reserved.
             </p>
             <div className="flex space-x-6">
-              <Link to="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              <Link to="/terms" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                 Privacy Policy
               </Link>
-              <Link to="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              <Link to="/terms" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                 Terms of Service
               </Link>
-              <Link to="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              <Link to="/terms" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                 Cookies
               </Link>
             </div>

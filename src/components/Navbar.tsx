@@ -19,6 +19,17 @@ const Navbar: React.FC = () => {
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
+  const scrollToSection = (sectionId: string) => {
+    const section = document.getElementById(sectionId);
+    if (section) {
+      window.scrollTo({
+        top: section.offsetTop - 80,
+        behavior: 'smooth'
+      });
+    }
+    setIsMenuOpen(false);
+  };
+
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -31,11 +42,12 @@ const Navbar: React.FC = () => {
         </Link>
         
         <nav className="hidden md:flex items-center space-x-1">
-          <Link to="/" className="navbar-link">Home</Link>
-          <Link to="/" className="navbar-link">Pricing</Link>
-          <Link to="/" className="navbar-link">Features</Link>
-          <Link to="/" className="navbar-link">About</Link>
-          <Link to="/" className="navbar-link">Contact</Link>
+          <button onClick={() => scrollToSection('home')} className="navbar-link">Home</button>
+          <button onClick={() => scrollToSection('pricing')} className="navbar-link">Pricing</button>
+          <button onClick={() => scrollToSection('control')} className="navbar-link">Server Control</button>
+          <button onClick={() => scrollToSection('features')} className="navbar-link">Features</button>
+          <button onClick={() => scrollToSection('testimonials')} className="navbar-link">Testimonials</button>
+          <button onClick={() => scrollToSection('contact')} className="navbar-link">Contact</button>
         </nav>
         
         <div className="hidden md:flex items-center space-x-4">
@@ -59,11 +71,12 @@ const Navbar: React.FC = () => {
         }`}
       >
         <div className="container mx-auto px-6 py-4 flex flex-col space-y-4">
-          <Link to="/" className="block py-2 hover:text-primary" onClick={toggleMenu}>Home</Link>
-          <Link to="/" className="block py-2 hover:text-primary" onClick={toggleMenu}>Pricing</Link>
-          <Link to="/" className="block py-2 hover:text-primary" onClick={toggleMenu}>Features</Link>
-          <Link to="/" className="block py-2 hover:text-primary" onClick={toggleMenu}>About</Link>
-          <Link to="/" className="block py-2 hover:text-primary" onClick={toggleMenu}>Contact</Link>
+          <button onClick={() => scrollToSection('home')} className="block py-2 hover:text-primary">Home</button>
+          <button onClick={() => scrollToSection('pricing')} className="block py-2 hover:text-primary">Pricing</button>
+          <button onClick={() => scrollToSection('control')} className="block py-2 hover:text-primary">Server Control</button>
+          <button onClick={() => scrollToSection('features')} className="block py-2 hover:text-primary">Features</button>
+          <button onClick={() => scrollToSection('testimonials')} className="block py-2 hover:text-primary">Testimonials</button>
+          <button onClick={() => scrollToSection('contact')} className="block py-2 hover:text-primary">Contact</button>
           <div className="flex flex-col space-y-2 pt-2">
             <Button variant="outline" className="w-full">Login</Button>
             <Button className="w-full">Get Started</Button>
