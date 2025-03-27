@@ -33,9 +33,7 @@ const Auth: React.FC = () => {
   const navigate = useNavigate();
   const [showTestInput, setShowTestInput] = useState(true);
 
-  // Console log when form methods are created for debugging
-  console.log("Initializing Auth component");
-
+  // Initialize forms outside of render flow
   const loginForm = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -52,14 +50,8 @@ const Auth: React.FC = () => {
       confirmPassword: "",
       fullName: "",
     },
-    mode: "onChange", // Add this to make the form more responsive
+    mode: "onBlur", // Changed to onBlur to prevent validation during typing
   });
-
-  console.log("Register form state:", registerForm.formState);
-
-  // Log form values for debugging
-  const registerValues = registerForm.watch();
-  console.log("Register form values:", registerValues);
 
   const onLoginSubmit = async (values: LoginFormValues) => {
     try {
@@ -159,14 +151,7 @@ const Auth: React.FC = () => {
                     <FormItem>
                       <FormLabel>Full Name</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="John Doe" 
-                          {...field} 
-                          onChange={(e) => {
-                            console.log("Full name input change:", e.target.value);
-                            field.onChange(e);
-                          }}
-                        />
+                        <Input placeholder="John Doe" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

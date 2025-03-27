@@ -8,7 +8,7 @@ const SimpleForm: React.FC = () => {
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
-    console.log('Input value changed:', e.target.value); // Add logging to debug
+    console.log('Input value changed:', e.target.value);
   };
   
   return (
