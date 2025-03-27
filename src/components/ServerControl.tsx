@@ -1,31 +1,97 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowUpDown, BarChart2, Play, PowerOff, RefreshCw, Terminal, Upload } from 'lucide-react';
 import Button from './Button';
 import FeatureCard from './FeatureCard';
+import { useAuth } from '@/contexts/AuthContext';
+import { ServerInstance } from '@/types/database';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/components/ui/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 const ServerControl: React.FC = () => {
-  const [serverStatus, setServerStatus] = useState<'offline' | 'starting' | 'online'>('offline');
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [server, setServer] = useState<ServerInstance | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleToggleServer = () => {
-    if (serverStatus === 'offline') {
-      setIsLoading(true);
-      setServerStatus('starting');
+  useEffect(() => {
+    if (user) {
+      fetchUserServer();
+    }
+  }, [user]);
+
+  const fetchUserServer = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('server_instances')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      if (error) {
+        throw error;
+      }
+
+      if (data && data.length > 0) {
+        setServer(data[0] as ServerInstance);
+      }
+    } catch (error) {
+      console.error('Error fetching server:', error);
+    }
+  };
+
+  const handleToggleServer = async () => {
+    if (!user) {
+      toast({
+        title: 'Authentication required',
+        description: 'Please log in to manage servers',
+        variant: 'destructive',
+      });
+      navigate('/auth');
+      return;
+    }
+
+    if (!server) {
+      navigate('/dashboard');
+      return;
+    }
+
+    setIsLoading(true);
+    
+    try {
+      const newStatus = server.status === 'offline' ? 'starting' : 'stopping';
       
-      // Simulate server startup
-      setTimeout(() => {
-        setServerStatus('online');
+      const { error } = await supabase
+        .from('server_instances')
+        .update({ status: newStatus })
+        .eq('id', server.id);
+        
+      if (error) throw error;
+      
+      fetchUserServer();
+      
+      // Simulate server startup/shutdown
+      setTimeout(async () => {
+        const finalStatus = server.status === 'offline' ? 'online' : 'offline';
+        const ipAddress = server.status === 'offline' ? '123.45.67.89' : null;
+        
+        const { error: updateError } = await supabase
+          .from('server_instances')
+          .update({ 
+            status: finalStatus,
+            ip_address: ipAddress 
+          })
+          .eq('id', server.id);
+          
+        if (updateError) throw updateError;
+        
+        fetchUserServer();
         setIsLoading(false);
       }, 2000);
-    } else if (serverStatus === 'online') {
-      setIsLoading(true);
-      
-      // Simulate server shutdown
-      setTimeout(() => {
-        setServerStatus('offline');
-        setIsLoading(false);
-      }, 1500);
+    } catch (error) {
+      console.error('Error toggling server:', error);
+      setIsLoading(false);
     }
   };
 
@@ -42,102 +108,136 @@ const ServerControl: React.FC = () => {
       </div>
 
       <div className="glass-effect rounded-xl p-8 max-w-5xl mx-auto mb-16">
-        <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-6">
+        {user && server ? (
           <div>
-            <h3 className="text-2xl font-bold mb-2">My Minecraft Server</h3>
-            <div className="flex items-center">
-              <div className={`w-3 h-3 rounded-full mr-2 ${
-                serverStatus === 'online' ? 'bg-minecraft-green' : 
-                serverStatus === 'starting' ? 'bg-minecraft-orange' : 'bg-red-500'
-              }`}></div>
-              <span className="text-muted-foreground">
-                Status: {serverStatus === 'online' ? 'Online' : serverStatus === 'starting' ? 'Starting...' : 'Offline'}
-              </span>
-            </div>
-          </div>
-          <div className="flex gap-4">
-            <Button 
-              variant={serverStatus === 'online' ? 'outline' : 'primary'}
-              size="lg"
-              isLoading={isLoading}
-              onClick={handleToggleServer}
-              leftIcon={serverStatus === 'online' ? <PowerOff size={18} /> : <Play size={18} />}
-            >
-              {serverStatus === 'online' ? 'Stop Server' : 'Start Server'}
-            </Button>
-            <Button 
-              variant="outline" 
-              size="lg"
-              disabled={serverStatus !== 'online'}
-              leftIcon={<RefreshCw size={18} />}
-            >
-              Restart
-            </Button>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-secondary/20 rounded-lg p-4">
-            <div className="flex justify-between items-center mb-2">
-              <h4 className="font-medium">CPU Usage</h4>
-              <span className="text-sm text-minecraft-green">12%</span>
-            </div>
-            <div className="w-full bg-background/50 rounded-full h-2">
-              <div className="bg-minecraft-green h-2 rounded-full" style={{ width: '12%' }}></div>
-            </div>
-          </div>
-          <div className="bg-secondary/20 rounded-lg p-4">
-            <div className="flex justify-between items-center mb-2">
-              <h4 className="font-medium">RAM Usage</h4>
-              <span className="text-sm text-primary">1.2GB / 4GB</span>
-            </div>
-            <div className="w-full bg-background/50 rounded-full h-2">
-              <div className="bg-primary h-2 rounded-full" style={{ width: '30%' }}></div>
-            </div>
-          </div>
-          <div className="bg-secondary/20 rounded-lg p-4">
-            <div className="flex justify-between items-center mb-2">
-              <h4 className="font-medium">Storage</h4>
-              <span className="text-sm text-minecraft-purple">8.4GB / 25GB</span>
-            </div>
-            <div className="w-full bg-background/50 rounded-full h-2">
-              <div className="bg-minecraft-purple h-2 rounded-full" style={{ width: '34%' }}></div>
-            </div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="glass-effect dark:bg-secondary/10 rounded-lg p-4">
-            <h4 className="font-medium flex items-center gap-2 mb-4">
-              <Terminal size={18} />
-              Console Output
-            </h4>
-            <div className="bg-background/80 rounded-lg p-3 text-sm font-mono h-48 overflow-y-auto">
-              <p className="text-gray-400">[08:15:32] [Server thread/INFO]: Starting minecraft server version 1.19.2</p>
-              <p className="text-gray-400">[08:15:33] [Server thread/INFO]: Loading properties</p>
-              <p className="text-gray-400">[08:15:33] [Server thread/INFO]: Default game type: SURVIVAL</p>
-              <p className="text-gray-400">[08:15:34] [Server thread/INFO]: Preparing level "world"</p>
-              <p className="text-gray-400">[08:15:35] [Server thread/INFO]: Preparing start region for dimension minecraft:overworld</p>
-              <p className="text-minecraft-green">[08:15:38] [Server thread/INFO]: Done (5.724s)! For help, type "help"</p>
-              <p className="text-minecraft-green">[08:15:38] [Server thread/INFO]: Server is running and ready for connections</p>
-            </div>
-          </div>
-          <div className="glass-effect dark:bg-secondary/10 rounded-lg p-4">
-            <h4 className="font-medium flex items-center gap-2 mb-4">
-              <BarChart2 size={18} />
-              Players Online
-            </h4>
-            <div className="bg-background/80 rounded-lg p-4 h-48 flex flex-col justify-center items-center">
-              <p className="text-4xl font-bold mb-2">0 / 20</p>
-              <p className="text-muted-foreground text-sm">No players currently online</p>
-              <div className="mt-4">
-                <Button size="sm" leftIcon={<ArrowUpDown size={16} />}>
-                  View Player History
+            <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-6">
+              <div>
+                <h3 className="text-2xl font-bold mb-2">{server.name}</h3>
+                <div className="flex items-center">
+                  <div className={`w-3 h-3 rounded-full mr-2 ${
+                    server.status === 'online' ? 'bg-minecraft-green' : 
+                    server.status === 'starting' ? 'bg-minecraft-orange' : 'bg-red-500'
+                  }`}></div>
+                  <span className="text-muted-foreground">
+                    Status: {server.status === 'online' ? 'Online' : server.status === 'starting' ? 'Starting...' : 'Offline'}
+                  </span>
+                </div>
+              </div>
+              <div className="flex gap-4">
+                <Button 
+                  variant={server.status === 'online' ? 'outline' : 'primary'}
+                  size="lg"
+                  isLoading={isLoading}
+                  onClick={handleToggleServer}
+                  leftIcon={server.status === 'online' ? <PowerOff size={18} /> : <Play size={18} />}
+                >
+                  {server.status === 'online' ? 'Stop Server' : 'Start Server'}
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="lg"
+                  disabled={server.status !== 'online'}
+                  leftIcon={<RefreshCw size={18} />}
+                >
+                  Restart
                 </Button>
               </div>
             </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <div className="bg-secondary/20 rounded-lg p-4">
+                <div className="flex justify-between items-center mb-2">
+                  <h4 className="font-medium">CPU Usage</h4>
+                  <span className="text-sm text-minecraft-green">12%</span>
+                </div>
+                <div className="w-full bg-background/50 rounded-full h-2">
+                  <div className="bg-minecraft-green h-2 rounded-full" style={{ width: '12%' }}></div>
+                </div>
+              </div>
+              <div className="bg-secondary/20 rounded-lg p-4">
+                <div className="flex justify-between items-center mb-2">
+                  <h4 className="font-medium">RAM Usage</h4>
+                  <span className="text-sm text-primary">1.2GB / {server.ram_gb}GB</span>
+                </div>
+                <div className="w-full bg-background/50 rounded-full h-2">
+                  <div className="bg-primary h-2 rounded-full" style={{ width: '30%' }}></div>
+                </div>
+              </div>
+              <div className="bg-secondary/20 rounded-lg p-4">
+                <div className="flex justify-between items-center mb-2">
+                  <h4 className="font-medium">Storage</h4>
+                  <span className="text-sm text-minecraft-purple">8.4GB / {server.storage_gb}GB</span>
+                </div>
+                <div className="w-full bg-background/50 rounded-full h-2">
+                  <div className="bg-minecraft-purple h-2 rounded-full" style={{ width: '34%' }}></div>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="glass-effect dark:bg-secondary/10 rounded-lg p-4">
+                <h4 className="font-medium flex items-center gap-2 mb-4">
+                  <Terminal size={18} />
+                  Console Output
+                </h4>
+                <div className="bg-background/80 rounded-lg p-3 text-sm font-mono h-48 overflow-y-auto">
+                  <p className="text-gray-400">[08:15:32] [Server thread/INFO]: Starting minecraft server version {server.version}</p>
+                  <p className="text-gray-400">[08:15:33] [Server thread/INFO]: Loading properties</p>
+                  <p className="text-gray-400">[08:15:33] [Server thread/INFO]: Default game type: SURVIVAL</p>
+                  <p className="text-gray-400">[08:15:34] [Server thread/INFO]: Preparing level "world"</p>
+                  <p className="text-gray-400">[08:15:35] [Server thread/INFO]: Preparing start region for dimension minecraft:overworld</p>
+                  <p className="text-minecraft-green">[08:15:38] [Server thread/INFO]: Done (5.724s)! For help, type "help"</p>
+                  <p className="text-minecraft-green">[08:15:38] [Server thread/INFO]: Server is running and ready for connections</p>
+                </div>
+              </div>
+              <div className="glass-effect dark:bg-secondary/10 rounded-lg p-4">
+                <h4 className="font-medium flex items-center gap-2 mb-4">
+                  <BarChart2 size={18} />
+                  Players Online
+                </h4>
+                <div className="bg-background/80 rounded-lg p-4 h-48 flex flex-col justify-center items-center">
+                  <p className="text-4xl font-bold mb-2">0 / {server.max_players}</p>
+                  <p className="text-muted-foreground text-sm">No players currently online</p>
+                  <div className="mt-4">
+                    <Button size="sm" leftIcon={<ArrowUpDown size={16} />}>
+                      View Player History
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="text-center py-12">
+            {user ? (
+              <div>
+                <h3 className="text-2xl font-bold mb-4">No Server Found</h3>
+                <p className="text-muted-foreground mb-8">
+                  You don't have any Minecraft servers yet. Create your first server to get started.
+                </p>
+                <Button 
+                  size="lg" 
+                  onClick={() => navigate('/dashboard')}
+                >
+                  Create a Server
+                </Button>
+              </div>
+            ) : (
+              <div>
+                <h3 className="text-2xl font-bold mb-4">Server Control Demo</h3>
+                <p className="text-muted-foreground mb-8">
+                  Sign in or create an account to start managing your own Minecraft servers.
+                </p>
+                <Button 
+                  size="lg" 
+                  onClick={() => navigate('/auth')}
+                >
+                  Sign In
+                </Button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">

@@ -21,6 +21,7 @@ interface PricingCardProps {
   cpu: string;
   storage: string;
   players: string;
+  onButtonClick?: () => void;
 }
 
 const PricingCard: React.FC<PricingCardProps> = ({
@@ -34,7 +35,8 @@ const PricingCard: React.FC<PricingCardProps> = ({
   ram,
   cpu,
   storage,
-  players
+  players,
+  onButtonClick
 }) => {
   return (
     <div 
@@ -85,6 +87,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
         <Button 
           className={cn("w-full mb-6", popular ? "bg-primary" : "")}
           variant={popular ? "primary" : "outline"}
+          onClick={onButtonClick}
         >
           {buttonText}
         </Button>

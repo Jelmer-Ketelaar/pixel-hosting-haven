@@ -3,43 +3,22 @@ import React, { useState } from 'react';
 import PricingCard from './PricingCard';
 import Button from './Button';
 import { Database, Globe, Server } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import { pricingPlans } from '@/data/pricingPlans';
 
 const ServerPricing: React.FC = () => {
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
+  const { user } = useAuth();
+  const navigate = useNavigate();
   
-  const features = [
-    { title: 'Instant Setup', available: true },
-    { title: 'DDoS Protection', available: true },
-    { title: '24/7 Support', available: true },
-    { title: 'Automated Backups', available: true },
-    { title: 'Custom Domain', available: false },
-    { title: 'Plugin Support', available: true },
-    { title: 'Mod Support', available: true },
-  ];
-  
-  const premiumFeatures = [
-    { title: 'Instant Setup', available: true },
-    { title: 'DDoS Protection', available: true },
-    { title: '24/7 Support', available: true },
-    { title: 'Automated Backups', available: true },
-    { title: 'Custom Domain', available: true },
-    { title: 'Plugin Support', available: true },
-    { title: 'Mod Support', available: true },
-    { title: 'Priority Support', available: true },
-  ];
-  
-  const enterpriseFeatures = [
-    { title: 'Instant Setup', available: true },
-    { title: 'DDoS Protection', available: true },
-    { title: '24/7 Support', available: true },
-    { title: 'Automated Backups', available: true },
-    { title: 'Custom Domain', available: true },
-    { title: 'Plugin Support', available: true },
-    { title: 'Mod Support', available: true },
-    { title: 'Priority Support', available: true },
-    { title: 'Dedicated IP', available: true },
-    { title: 'Enterprise SLA', available: true },
-  ];
+  const handleGetStarted = () => {
+    if (user) {
+      navigate('/dashboard');
+    } else {
+      navigate('/auth');
+    }
+  };
   
   return (
     <section id="pricing" className="section-container">
@@ -81,47 +60,53 @@ const ServerPricing: React.FC = () => {
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
         <PricingCard
-          name="Starter"
-          description="Perfect for small communities"
+          name={pricingPlans[0].name}
+          description={pricingPlans[0].description}
           price={billingPeriod === 'monthly' ? '€4.99' : '€47.90'}
-          features={features}
+          features={pricingPlans[0].features}
           icon={<Globe size={24} />}
-          ram="2GB"
-          cpu="1 vCore"
-          storage="10GB SSD"
-          players="Up to 10"
+          ram={pricingPlans[0].resources.ram}
+          cpu={pricingPlans[0].resources.cpu}
+          storage={pricingPlans[0].resources.storage}
+          players={pricingPlans[0].resources.players}
+          buttonText={user ? "Select Plan" : "Get Started"}
+          onButtonClick={handleGetStarted}
         />
         
         <PricingCard
-          name="Premium"
-          description="Ideal for growing servers"
+          name={pricingPlans[1].name}
+          description={pricingPlans[1].description}
           price={billingPeriod === 'monthly' ? '€9.99' : '€95.90'}
-          features={premiumFeatures}
+          features={pricingPlans[1].features}
           popular={true}
           icon={<Database size={24} />}
-          ram="6GB"
-          cpu="2 vCores"
-          storage="25GB SSD"
-          players="Up to 40"
+          ram={pricingPlans[1].resources.ram}
+          cpu={pricingPlans[1].resources.cpu}
+          storage={pricingPlans[1].resources.storage}
+          players={pricingPlans[1].resources.players}
+          buttonText={user ? "Select Plan" : "Get Started"}
+          onButtonClick={handleGetStarted}
         />
         
         <PricingCard
-          name="Enterprise"
-          description="For large communities"
+          name={pricingPlans[2].name}
+          description={pricingPlans[2].description}
           price={billingPeriod === 'monthly' ? '€19.99' : '€191.90'}
-          features={enterpriseFeatures}
+          features={pricingPlans[2].features}
           icon={<Server size={24} />}
-          ram="12GB"
-          cpu="4 vCores"
-          storage="50GB SSD"
-          players="Up to 100"
+          ram={pricingPlans[2].resources.ram}
+          cpu={pricingPlans[2].resources.cpu}
+          storage={pricingPlans[2].resources.storage}
+          players={pricingPlans[2].resources.players}
+          buttonText={user ? "Select Plan" : "Get Started"}
+          onButtonClick={handleGetStarted}
         />
       </div>
       
       <div className="mt-16 text-center">
         <p className="text-muted-foreground mb-4">Need a custom solution?</p>
         <h3 className="text-2xl font-bold mb-6">Contact us for a tailored server setup</h3>
-        <Button>Contact Sales</Button>
+        <Button onClick={() => navigate('/contact')}>Contact Sales</Button>
       </div>
     </section>
   );
