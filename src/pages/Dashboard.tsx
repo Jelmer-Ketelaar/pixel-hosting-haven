@@ -80,7 +80,7 @@ const Dashboard: React.FC = () => {
   }
 
   const handleCreateServer = async () => {
-    if (!selectedPlan || !serverName.trim()) {
+    if (!selectedPlan || !serverName.trim() || !user) {
       toast({
         title: 'Invalid input',
         description: 'Please provide a server name and select a plan.',
@@ -92,18 +92,20 @@ const Dashboard: React.FC = () => {
     try {
       setIsCreating(true);
 
+      // Fix: Convert string values to numbers and add user_id
       const newServer = {
         name: serverName.trim(),
         plan: selectedPlan.name,
-        ram_gb: selectedPlan.resources.ram.replace('GB', '').trim(),
-        cpu_cores: selectedPlan.resources.cpu.replace('vCores', '').trim(),
-        storage_gb: selectedPlan.resources.storage.replace('GB SSD', '').trim(),
-        max_players: selectedPlan.resources.players.replace('Up to ', '').trim(),
+        ram_gb: parseInt(selectedPlan.resources.ram.replace('GB', '').trim()),
+        cpu_cores: parseInt(selectedPlan.resources.cpu.replace('vCores', '').trim()),
+        storage_gb: parseInt(selectedPlan.resources.storage.replace('GB SSD', '').trim()),
+        max_players: parseInt(selectedPlan.resources.players.replace('Up to ', '').trim()),
+        user_id: user.id
       };
 
       const { data, error } = await supabase
         .from('server_instances')
-        .insert([newServer])
+        .insert(newServer)
         .select();
 
       if (error) {
