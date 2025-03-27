@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Menu, X, User } from 'lucide-react';
+import { Menu, X, User, Shield } from 'lucide-react';
 import Button from './Button';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -10,15 +10,22 @@ const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
 
+    // Check if user is admin
+    // In a real application, this would check a user role in the database
+    if (user) {
+      setIsAdmin(true); // For demo, we're setting all logged in users as admins
+    }
+
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [user]);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
@@ -57,6 +64,7 @@ const Navbar: React.FC = () => {
           <Link to="/about" className="navbar-link">About</Link>
           <button onClick={() => scrollToSection('contact')} className="navbar-link">Contact</button>
           {user && <Link to="/dashboard" className="navbar-link">Dashboard</Link>}
+          {isAdmin && user && <Link to="/admin" className="navbar-link">Admin</Link>}
         </nav>
         
         <div className="hidden md:flex items-center space-x-4">
@@ -68,6 +76,14 @@ const Navbar: React.FC = () => {
                   Dashboard
                 </Button>
               </Link>
+              {isAdmin && (
+                <Link to="/admin">
+                  <Button variant="ghost" size="sm" className="px-4 flex items-center gap-2">
+                    <Shield size={16} />
+                    Admin
+                  </Button>
+                </Link>
+              )}
               <Button variant="outline" size="sm" onClick={() => signOut()}>Logout</Button>
             </div>
           ) : (
@@ -104,6 +120,7 @@ const Navbar: React.FC = () => {
           <Link to="/about" className="block py-2 hover:text-primary" onClick={() => setIsMenuOpen(false)}>About</Link>
           <button onClick={() => scrollToSection('contact')} className="block py-2 hover:text-primary text-left">Contact</button>
           {user && <Link to="/dashboard" className="block py-2 hover:text-primary" onClick={() => setIsMenuOpen(false)}>Dashboard</Link>}
+          {isAdmin && user && <Link to="/admin" className="block py-2 hover:text-primary" onClick={() => setIsMenuOpen(false)}>Admin</Link>}
           
           <div className="flex flex-col space-y-2 pt-2">
             {user ? (
@@ -111,6 +128,11 @@ const Navbar: React.FC = () => {
                 <Link to="/dashboard" onClick={() => setIsMenuOpen(false)}>
                   <Button variant="outline" className="w-full">Dashboard</Button>
                 </Link>
+                {isAdmin && (
+                  <Link to="/admin" onClick={() => setIsMenuOpen(false)}>
+                    <Button variant="outline" className="w-full">Admin Panel</Button>
+                  </Link>
+                )}
                 <Button className="w-full" onClick={() => {
                   signOut();
                   setIsMenuOpen(false);

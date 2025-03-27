@@ -10,6 +10,7 @@ import Auth from "./pages/Auth";
 import AuthVerify from "./pages/AuthVerify";
 import Dashboard from "./pages/Dashboard";
 import About from "./pages/About";
+import Admin from "./pages/Admin";
 import { AuthProvider } from "./contexts/AuthContext";
 
 const queryClient = new QueryClient();
@@ -27,6 +28,7 @@ const App = () => (
             <Route path="/auth/verify" element={<AuthVerify />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/about" element={<About />} />
+            <Route path="/admin" element={<Admin />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
