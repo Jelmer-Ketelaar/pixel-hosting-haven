@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { BillingRecord } from '@/types/database';
@@ -69,7 +68,7 @@ export const BillingManagement: React.FC = () => {
       
       let query = supabase
         .from('billing_records')
-        .select('*, profiles(*)')
+        .select('*, profiles:user_id(email, full_name)')
         .order('created_at', { ascending: false });
       
       if (selectedStatus) {
@@ -82,7 +81,12 @@ export const BillingManagement: React.FC = () => {
         throw error;
       }
 
-      setBillingRecords(data || []);
+      const typedRecords = data?.map(record => ({
+        ...record,
+        profiles: record.profiles || { email: 'Unknown', full_name: null }
+      })) as BillingRecord[];
+
+      setBillingRecords(typedRecords || []);
     } catch (error) {
       console.error('Error fetching billing records:', error);
       toast({
@@ -165,7 +169,7 @@ export const BillingManagement: React.FC = () => {
   };
 
   const filteredRecords = billingRecords.filter(record => {
-    const userEmail = (record as any).profiles?.email || '';
+    const userEmail = record.profiles?.email || '';
     const description = record.description || '';
     
     return (
@@ -307,7 +311,7 @@ export const BillingManagement: React.FC = () => {
                       {record.id.substring(0, 8)}
                     </TableCell>
                     <TableCell>
-                      {(record as any).profiles?.email || 'Unknown'}
+                      {record.profiles?.email || 'Unknown'}
                     </TableCell>
                     <TableCell>{record.description}</TableCell>
                     <TableCell className="font-medium">

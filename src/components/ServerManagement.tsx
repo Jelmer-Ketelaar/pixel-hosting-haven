@@ -53,14 +53,20 @@ export const ServerManagement: React.FC = () => {
       setIsLoading(true);
       const { data, error } = await supabase
         .from('server_instances')
-        .select('*, profiles(email, full_name)')
+        .select('*, profiles:user_id(email, full_name)')
         .order('created_at', { ascending: false });
 
       if (error) {
         throw error;
       }
 
-      setServers(data || []);
+      // Cast the data to our ServerInstance type
+      const typedServers = data?.map(server => ({
+        ...server,
+        profiles: server.profiles || { email: 'Unknown', full_name: null }
+      })) as ServerInstance[];
+
+      setServers(typedServers || []);
     } catch (error) {
       console.error('Error fetching servers:', error);
       toast({
@@ -218,8 +224,7 @@ export const ServerManagement: React.FC = () => {
                   <TableRow key={server.id}>
                     <TableCell className="font-medium">{server.name}</TableCell>
                     <TableCell>
-                      {/* Access the joined profile data - in a real implementation, you'd need to handle types properly */}
-                      {(server as any).profiles?.email || 'Unknown'}
+                      {server.profiles?.email || 'Unknown'}
                     </TableCell>
                     <TableCell>{server.plan}</TableCell>
                     <TableCell>

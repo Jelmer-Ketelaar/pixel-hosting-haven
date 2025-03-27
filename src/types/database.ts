@@ -4,7 +4,7 @@ export interface ServerInstance {
   user_id: string;
   name: string;
   plan: string;
-  status: 'offline' | 'starting' | 'online' | 'stopping' | 'error';
+  status: 'offline' | 'starting' | 'online' | 'stopping' | 'error' | string;
   ip_address: string | null;
   port: number;
   created_at: string;
@@ -15,6 +15,7 @@ export interface ServerInstance {
   max_players: number;
   version: string;
   auto_restart: boolean;
+  profiles?: any; // Add this to allow for joined profile data
 }
 
 export interface Profile {
@@ -50,9 +51,10 @@ export interface BillingRecord {
   server_id: string | null;
   amount: number;
   currency: string;
-  status: 'pending' | 'paid' | 'failed' | 'refunded';
+  status: 'pending' | 'paid' | 'failed' | 'refunded' | string;
   description: string;
   period_start: string | null;
   period_end: string | null;
   created_at: string;
+  profiles?: any; // Add this to allow for joined profile data
 }
