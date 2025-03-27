@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -32,6 +33,9 @@ const Auth: React.FC = () => {
   const navigate = useNavigate();
   const [showTestInput, setShowTestInput] = useState(true);
 
+  // Console log when form methods are created for debugging
+  console.log("Initializing Auth component");
+
   const loginForm = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -48,7 +52,14 @@ const Auth: React.FC = () => {
       confirmPassword: "",
       fullName: "",
     },
+    mode: "onChange", // Add this to make the form more responsive
   });
+
+  console.log("Register form state:", registerForm.formState);
+
+  // Log form values for debugging
+  const registerValues = registerForm.watch();
+  console.log("Register form values:", registerValues);
 
   const onLoginSubmit = async (values: LoginFormValues) => {
     try {
@@ -148,12 +159,20 @@ const Auth: React.FC = () => {
                     <FormItem>
                       <FormLabel>Full Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="John Doe" {...field} />
+                        <Input 
+                          placeholder="John Doe" 
+                          {...field} 
+                          onChange={(e) => {
+                            console.log("Full name input change:", e.target.value);
+                            field.onChange(e);
+                          }}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+                
                 <FormField
                   control={registerForm.control}
                   name="email"
@@ -167,6 +186,7 @@ const Auth: React.FC = () => {
                     </FormItem>
                   )}
                 />
+                
                 <FormField
                   control={registerForm.control}
                   name="password"
@@ -180,6 +200,7 @@ const Auth: React.FC = () => {
                     </FormItem>
                   )}
                 />
+                
                 <FormField
                   control={registerForm.control}
                   name="confirmPassword"
@@ -193,6 +214,7 @@ const Auth: React.FC = () => {
                     </FormItem>
                   )}
                 />
+                
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? "Creating account..." : "Create Account"}
                 </Button>
