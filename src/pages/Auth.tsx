@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -9,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
+import SimpleForm from '@/components/SimpleForm';
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -30,6 +30,7 @@ const Auth: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
   const { signIn, signUp, isLoading } = useAuth();
   const navigate = useNavigate();
+  const [showTestInput, setShowTestInput] = useState(true);
 
   const loginForm = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -88,6 +89,20 @@ const Auth: React.FC = () => {
                 : "Join us and start hosting your Minecraft servers"}
             </p>
           </div>
+
+          {showTestInput && (
+            <>
+              <SimpleForm />
+              <div className="flex justify-center my-4">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowTestInput(false)}
+                >
+                  Hide Test Field
+                </Button>
+              </div>
+            </>
+          )}
 
           {isLogin ? (
             <Form {...loginForm}>
