@@ -48,7 +48,6 @@ const Auth: React.FC = () => {
       confirmPassword: "",
       fullName: "",
     },
-    mode: "onBlur", // Validate on blur to avoid interrupting typing
   });
 
   const onLoginSubmit = async (values: LoginFormValues) => {
@@ -67,24 +66,20 @@ const Auth: React.FC = () => {
     }
   };
 
-  // Reset register form when switching modes
+  // Reset forms and copy only email when switching modes
   const handleToggleMode = () => {
     if (isLogin) {
-      // Going from login to register - optionally copy email
+      // Going from login to register - copy email only
       const loginEmail = loginForm.getValues("email");
-      registerForm.reset({
-        email: loginEmail,
-        password: "",
-        confirmPassword: "",
-        fullName: "",
-      });
+      registerForm.setValue("email", loginEmail);
+      registerForm.setValue("fullName", "");
+      registerForm.setValue("password", "");
+      registerForm.setValue("confirmPassword", "");
     } else {
-      // Going from register to login - optionally copy email
+      // Going from register to login - copy email only
       const registerEmail = registerForm.getValues("email");
-      loginForm.reset({
-        email: registerEmail,
-        password: "",
-      });
+      loginForm.setValue("email", registerEmail);
+      loginForm.setValue("password", "");
     }
     setIsLogin(!isLogin);
   };
