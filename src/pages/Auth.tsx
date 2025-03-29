@@ -9,7 +9,6 @@ import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
-import SimpleForm from '@/components/SimpleForm';
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -31,7 +30,6 @@ const Auth: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
   const { signIn, signUp, isLoading } = useAuth();
   const navigate = useNavigate();
-  const [showTestInput, setShowTestInput] = useState(true);
 
   // Initialize forms outside of render flow
   const loginForm = useForm<LoginFormValues>({
@@ -50,7 +48,7 @@ const Auth: React.FC = () => {
       confirmPassword: "",
       fullName: "",
     },
-    mode: "onBlur", // Changed to onBlur to prevent validation during typing
+    mode: "onBlur", // Validate on blur to avoid interrupting typing
   });
 
   const onLoginSubmit = async (values: LoginFormValues) => {
@@ -67,6 +65,28 @@ const Auth: React.FC = () => {
     } catch (error) {
       console.error("Registration error:", error);
     }
+  };
+
+  // Reset register form when switching modes
+  const handleToggleMode = () => {
+    if (isLogin) {
+      // Going from login to register - optionally copy email
+      const loginEmail = loginForm.getValues("email");
+      registerForm.reset({
+        email: loginEmail,
+        password: "",
+        confirmPassword: "",
+        fullName: "",
+      });
+    } else {
+      // Going from register to login - optionally copy email
+      const registerEmail = registerForm.getValues("email");
+      loginForm.reset({
+        email: registerEmail,
+        password: "",
+      });
+    }
+    setIsLogin(!isLogin);
   };
 
   return (
@@ -92,20 +112,6 @@ const Auth: React.FC = () => {
                 : "Join us and start hosting your Minecraft servers"}
             </p>
           </div>
-
-          {showTestInput && (
-            <>
-              <SimpleForm />
-              <div className="flex justify-center my-4">
-                <Button 
-                  variant="outline" 
-                  onClick={() => setShowTestInput(false)}
-                >
-                  Hide Test Field
-                </Button>
-              </div>
-            </>
-          )}
 
           {isLogin ? (
             <Form {...loginForm}>
@@ -211,7 +217,7 @@ const Auth: React.FC = () => {
             <button
               type="button"
               className="text-primary hover:underline text-sm"
-              onClick={() => setIsLogin(!isLogin)}
+              onClick={handleToggleMode}
             >
               {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
             </button>
