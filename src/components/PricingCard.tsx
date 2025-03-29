@@ -1,111 +1,106 @@
 
 import React from 'react';
 import { Check } from 'lucide-react';
-import Button from './Button';
-import { cn } from '@/lib/utils';
-
-interface PricingFeature {
-  title: string;
-  available: boolean;
-}
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import PaymentButton from './PaymentButton';
 
 interface PricingCardProps {
   name: string;
-  price: string;
   description: string;
-  features: PricingFeature[];
+  price: string;
+  features: string[];
   popular?: boolean;
   icon?: React.ReactNode;
-  buttonText?: string;
   ram: string;
   cpu: string;
   storage: string;
   players: string;
+  buttonText: string;
   onButtonClick?: () => void;
 }
 
 const PricingCard: React.FC<PricingCardProps> = ({
   name,
-  price,
   description,
+  price,
   features,
   popular = false,
   icon,
-  buttonText = "Get Started",
   ram,
   cpu,
   storage,
   players,
-  onButtonClick
+  buttonText,
 }) => {
   return (
-    <div 
-      className={cn(
-        "relative rounded-2xl overflow-hidden transition-all duration-300 hover:translate-y-[-8px]",
-        popular ? "border-2 border-primary shadow-lg" : "border border-border"
-      )}
-    >
+    <Card className={`flex flex-col h-full border ${popular ? 'border-primary' : 'border-border'}`}>
       {popular && (
-        <div className="absolute top-0 left-0 right-0 bg-primary py-1.5">
-          <p className="text-center text-primary-foreground text-sm font-medium">Most Popular</p>
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+          <Badge variant="default" className="bg-primary text-primary-foreground">Most Popular</Badge>
         </div>
       )}
       
-      <div className={cn("p-6 pt-8", popular && "pt-12")}>
-        <div className="flex items-start justify-between mb-4">
-          <div>
-            <h3 className="text-xl font-bold">{name}</h3>
-            <p className="text-muted-foreground text-sm mt-1">{description}</p>
+      <CardHeader className={`pb-8 pt-6 ${popular ? 'bg-primary/5' : ''}`}>
+        <div className="flex justify-between items-start mb-2">
+          <div className="flex items-center">
+            {icon && (
+              <div className="w-10 h-10 rounded-full bg-secondary/30 flex items-center justify-center mr-4">
+                {icon}
+              </div>
+            )}
+            <div>
+              <h3 className="text-xl font-bold">{name}</h3>
+              <p className="text-muted-foreground text-sm">{description}</p>
+            </div>
           </div>
-          {icon && <div className="text-primary">{icon}</div>}
         </div>
         
-        <div className="mb-6">
+        <div className="mt-4">
           <span className="text-3xl font-bold">{price}</span>
-          <span className="text-muted-foreground">/month</span>
+          <span className="text-muted-foreground ml-2">/month</span>
+        </div>
+      </CardHeader>
+      
+      <CardContent className="flex-grow flex flex-col">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-2 mb-6 text-sm">
+          <div>
+            <p className="text-muted-foreground">RAM</p>
+            <p className="font-medium">{ram}</p>
+          </div>
+          <div>
+            <p className="text-muted-foreground">CPU</p>
+            <p className="font-medium">{cpu}</p>
+          </div>
+          <div>
+            <p className="text-muted-foreground">Storage</p>
+            <p className="font-medium">{storage}</p>
+          </div>
+          <div>
+            <p className="text-muted-foreground">Players</p>
+            <p className="font-medium">{players}</p>
+          </div>
         </div>
         
-        <div className="grid grid-cols-2 gap-4 mb-8">
-          <div className="bg-secondary/50 p-3 rounded-lg text-center">
-            <p className="text-sm text-muted-foreground">RAM</p>
-            <p className="font-bold">{ram}</p>
-          </div>
-          <div className="bg-secondary/50 p-3 rounded-lg text-center">
-            <p className="text-sm text-muted-foreground">CPU</p>
-            <p className="font-bold">{cpu}</p>
-          </div>
-          <div className="bg-secondary/50 p-3 rounded-lg text-center">
-            <p className="text-sm text-muted-foreground">Storage</p>
-            <p className="font-bold">{storage}</p>
-          </div>
-          <div className="bg-secondary/50 p-3 rounded-lg text-center">
-            <p className="text-sm text-muted-foreground">Players</p>
-            <p className="font-bold">{players}</p>
-          </div>
-        </div>
-        
-        <Button 
-          className={cn("w-full mb-6", popular ? "bg-primary" : "")}
-          variant={popular ? "primary" : "outline"}
-          onClick={onButtonClick}
-        >
-          {buttonText}
-        </Button>
-        
-        <ul className="space-y-3">
-          {features.map((feature, index) => (
-            <li key={index} className="flex items-start">
-              <span className={`mr-2 mt-0.5 ${feature.available ? 'text-minecraft-green' : 'text-muted-foreground'}`}>
-                <Check size={16} className={feature.available ? 'opacity-100' : 'opacity-50'} />
-              </span>
-              <span className={`text-sm ${feature.available ? 'text-foreground' : 'text-muted-foreground'}`}>
-                {feature.title}
-              </span>
-            </li>
+        <div className="space-y-3 mb-6 flex-grow">
+          {features.map((feature, i) => (
+            <div key={i} className="flex items-start">
+              <div className="mr-2 mt-0.5 text-primary">
+                <Check size={16} />
+              </div>
+              <span className="text-sm">{feature}</span>
+            </div>
           ))}
-        </ul>
-      </div>
-    </div>
+        </div>
+        
+        <PaymentButton 
+          planName={name} 
+          planPrice={price} 
+          buttonText={buttonText}
+          className={`w-full ${popular ? 'bg-primary hover:bg-primary/90' : ''}`}
+        />
+      </CardContent>
+    </Card>
   );
 };
 

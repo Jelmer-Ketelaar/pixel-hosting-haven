@@ -1,16 +1,40 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PricingCard from './PricingCard';
 import Button from './Button';
 import { Database, Globe, Server } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { pricingPlans } from '@/data/pricingPlans';
+import { toast } from '@/components/ui/use-toast';
 
 const ServerPricing: React.FC = () => {
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  useEffect(() => {
+    // Check if the URL includes success or canceled parameters
+    const searchParams = new URLSearchParams(location.search);
+    const success = searchParams.get('success');
+    const canceled = searchParams.get('canceled');
+    
+    if (success === 'true') {
+      toast({
+        title: 'Payment Successful!',
+        description: 'Thank you for your purchase. Your server is being set up.',
+      });
+      // Redirect to dashboard after successful payment
+      navigate('/dashboard');
+    } else if (canceled === 'true') {
+      toast({
+        title: 'Payment Canceled',
+        description: 'Your payment was canceled. Please try again if you want to purchase a server.',
+        variant: 'destructive',
+      });
+    }
+  }, [location, navigate]);
   
   const handleGetStarted = () => {
     if (user) {
@@ -69,8 +93,7 @@ const ServerPricing: React.FC = () => {
           cpu={pricingPlans[0].resources.cpu}
           storage={pricingPlans[0].resources.storage}
           players={pricingPlans[0].resources.players}
-          buttonText={user ? "Select Plan" : "Get Started"}
-          onButtonClick={handleGetStarted}
+          buttonText={user ? "Subscribe Now" : "Get Started"}
         />
         
         <PricingCard
@@ -84,8 +107,7 @@ const ServerPricing: React.FC = () => {
           cpu={pricingPlans[1].resources.cpu}
           storage={pricingPlans[1].resources.storage}
           players={pricingPlans[1].resources.players}
-          buttonText={user ? "Select Plan" : "Get Started"}
-          onButtonClick={handleGetStarted}
+          buttonText={user ? "Subscribe Now" : "Get Started"}
         />
         
         <PricingCard
@@ -98,8 +120,7 @@ const ServerPricing: React.FC = () => {
           cpu={pricingPlans[2].resources.cpu}
           storage={pricingPlans[2].resources.storage}
           players={pricingPlans[2].resources.players}
-          buttonText={user ? "Select Plan" : "Get Started"}
-          onButtonClick={handleGetStarted}
+          buttonText={user ? "Subscribe Now" : "Get Started"}
         />
       </div>
       
