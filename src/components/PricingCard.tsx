@@ -9,7 +9,7 @@ interface PricingCardProps {
   name: string;
   description: string;
   price: string;
-  features: string[];
+  features: Array<{ title: string; available: boolean }>;
   popular?: boolean;
   icon?: React.ReactNode;
   ram: string;
@@ -86,9 +86,9 @@ const PricingCard: React.FC<PricingCardProps> = ({
           {features.map((feature, i) => (
             <div key={i} className="flex items-start">
               <div className="mr-2 mt-0.5 text-primary">
-                <Check size={16} />
+                {feature.available && <Check size={16} />}
               </div>
-              <span className="text-sm">{feature}</span>
+              <span className="text-sm">{feature.title}</span>
             </div>
           ))}
         </div>
