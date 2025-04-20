@@ -9,7 +9,204 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      billing_records: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string | null
+          description: string
+          id: string
+          period_end: string | null
+          period_start: string | null
+          server_id: string | null
+          status: string | null
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string | null
+          description: string
+          id?: string
+          period_end?: string | null
+          period_start?: string | null
+          server_id?: string | null
+          status?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string | null
+          description?: string
+          id?: string
+          period_end?: string | null
+          period_start?: string | null
+          server_id?: string | null
+          status?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "billing_records_server_id_fkey"
+            columns: ["server_id"]
+            isOneToOne: false
+            referencedRelation: "server_instances"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string
+          full_name: string | null
+          id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email: string
+          full_name?: string | null
+          id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
+      server_backups: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          path: string
+          server_id: string
+          size_mb: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          path: string
+          server_id: string
+          size_mb?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          path?: string
+          server_id?: string
+          size_mb?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "server_backups_server_id_fkey"
+            columns: ["server_id"]
+            isOneToOne: false
+            referencedRelation: "server_instances"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      server_instances: {
+        Row: {
+          auto_restart: boolean | null
+          cpu_cores: number
+          created_at: string
+          id: string
+          ip_address: string | null
+          max_players: number
+          name: string
+          plan: string
+          port: number | null
+          ram_gb: number
+          status: string
+          storage_gb: number
+          updated_at: string
+          user_id: string
+          version: string | null
+        }
+        Insert: {
+          auto_restart?: boolean | null
+          cpu_cores: number
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          max_players: number
+          name: string
+          plan: string
+          port?: number | null
+          ram_gb: number
+          status?: string
+          storage_gb: number
+          updated_at?: string
+          user_id: string
+          version?: string | null
+        }
+        Update: {
+          auto_restart?: boolean | null
+          cpu_cores?: number
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          max_players?: number
+          name?: string
+          plan?: string
+          port?: number | null
+          ram_gb?: number
+          status?: string
+          storage_gb?: number
+          updated_at?: string
+          user_id?: string
+          version?: string | null
+        }
+        Relationships: []
+      }
+      server_mods: {
+        Row: {
+          enabled: boolean | null
+          id: string
+          installed_at: string
+          name: string
+          server_id: string
+          type: string
+          version: string
+        }
+        Insert: {
+          enabled?: boolean | null
+          id?: string
+          installed_at?: string
+          name: string
+          server_id: string
+          type: string
+          version: string
+        }
+        Update: {
+          enabled?: boolean | null
+          id?: string
+          installed_at?: string
+          name?: string
+          server_id?: string
+          type?: string
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "server_mods_server_id_fkey"
+            columns: ["server_id"]
+            isOneToOne: false
+            referencedRelation: "server_instances"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

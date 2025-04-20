@@ -110,33 +110,35 @@ const Navbar: React.FC = () => {
           <span className="text-2xl font-bold">PixelHost</span>
         </Link>
         
-        <NavigationMenuList className="hidden md:flex">
-          <NavigationMenuItem>
-            <NavLink href="/">Home</NavLink>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <NavLink isSection sectionId="pricing">Pricing</NavLink>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <NavLink isSection sectionId="features">Features</NavLink>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <NavLink href="/about">About</NavLink>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <NavLink isSection sectionId="contact">Contact</NavLink>
-          </NavigationMenuItem>
-          {user && (
+        <NavigationMenu className="hidden md:flex">
+          <NavigationMenuList>
             <NavigationMenuItem>
-              <NavLink href="/dashboard">Dashboard</NavLink>
+              <NavLink href="/">Home</NavLink>
             </NavigationMenuItem>
-          )}
-          {isAdmin && user && (
             <NavigationMenuItem>
-              <NavLink href="/admin">Admin</NavLink>
+              <NavLink isSection sectionId="pricing">Pricing</NavLink>
             </NavigationMenuItem>
-          )}
-        </NavigationMenuList>
+            <NavigationMenuItem>
+              <NavLink isSection sectionId="features">Features</NavLink>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <NavLink href="/about">About</NavLink>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <NavLink isSection sectionId="contact">Contact</NavLink>
+            </NavigationMenuItem>
+            {user && (
+              <NavigationMenuItem>
+                <NavLink href="/dashboard">Dashboard</NavLink>
+              </NavigationMenuItem>
+            )}
+            {isAdmin && user && (
+              <NavigationMenuItem>
+                <NavLink href="/admin">Admin</NavLink>
+              </NavigationMenuItem>
+            )}
+          </NavigationMenuList>
+        </NavigationMenu>
         
         <div className="hidden md:flex items-center space-x-4">
           {user ? (
