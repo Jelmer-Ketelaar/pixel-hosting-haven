@@ -8,8 +8,24 @@ import ServerControl from '@/components/ServerControl';
 import Testimonials from '@/components/Testimonials';
 import ContactSection from '@/components/ContactSection';
 import Footer from '@/components/Footer';
+import ScrollToTop from '@/components/ScrollToTop';
 
 const Index: React.FC = () => {
+  // Handle hash navigation
+  useEffect(() => {
+    // Check if there's a hash in the URL
+    if (window.location.hash) {
+      // Wait for the page to fully load
+      setTimeout(() => {
+        const id = window.location.hash.substring(1);
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    }
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -34,6 +50,7 @@ const Index: React.FC = () => {
         </section>
       </main>
       <Footer />
+      <ScrollToTop />
     </div>
   );
 };

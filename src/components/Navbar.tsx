@@ -1,15 +1,25 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Menu, X, User, Shield } from 'lucide-react';
-import Button from './Button';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Menu, X, User, Shield, ChevronDown } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
+import { 
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger 
+} from '@/components/ui/navigation-menu';
+import { cn } from '@/lib/utils';
 
 const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
@@ -18,7 +28,6 @@ const Navbar: React.FC = () => {
     };
 
     // Check if user is admin
-    // In a real application, this would check a user role in the database
     if (user) {
       setIsAdmin(true); // For demo, we're setting all logged in users as admins
     }
@@ -46,10 +55,54 @@ const Navbar: React.FC = () => {
     setIsMenuOpen(false);
   };
 
+  const NavLink = ({
+    href,
+    children,
+    isSection = false,
+    sectionId = '',
+    className,
+  }: {
+    href?: string;
+    children: React.ReactNode;
+    isSection?: boolean;
+    sectionId?: string;
+    className?: string;
+  }) => {
+    if (isSection) {
+      return (
+        <button 
+          onClick={() => scrollToSection(sectionId)}
+          className={cn(
+            "group inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:text-primary focus:outline-none disabled:pointer-events-none disabled:opacity-50",
+            location.hash === `#${sectionId}` ? "text-primary" : "text-muted-foreground",
+            className
+          )}
+        >
+          {children}
+        </button>
+      );
+    }
+    
+    return (
+      <Link 
+        to={href || '/'}
+        className={cn(
+          "group inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:text-primary focus:outline-none disabled:pointer-events-none disabled:opacity-50",
+          location.pathname === href ? "text-primary" : "text-muted-foreground",
+          className
+        )}
+      >
+        {children}
+      </Link>
+    );
+  };
+
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? 'py-2 bg-white/80 backdrop-blur-md shadow-sm dark:bg-background/80' : 'py-4 bg-transparent'
+        isScrolled 
+          ? 'py-2 bg-background/80 backdrop-blur-md shadow-sm border-b border-border/50' 
+          : 'py-4 bg-transparent'
       }`}
     >
       <div className="container mx-auto max-w-7xl px-6 flex justify-between items-center">
@@ -57,15 +110,33 @@ const Navbar: React.FC = () => {
           <span className="text-2xl font-bold">PixelHost</span>
         </Link>
         
-        <nav className="hidden md:flex items-center space-x-1">
-          <Link to="/" className="navbar-link">Home</Link>
-          <button onClick={() => scrollToSection('pricing')} className="navbar-link">Pricing</button>
-          <button onClick={() => scrollToSection('features')} className="navbar-link">Features</button>
-          <Link to="/about" className="navbar-link">About</Link>
-          <button onClick={() => scrollToSection('contact')} className="navbar-link">Contact</button>
-          {user && <Link to="/dashboard" className="navbar-link">Dashboard</Link>}
-          {isAdmin && user && <Link to="/admin" className="navbar-link">Admin</Link>}
-        </nav>
+        <NavigationMenuList className="hidden md:flex">
+          <NavigationMenuItem>
+            <NavLink href="/">Home</NavLink>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavLink isSection sectionId="pricing">Pricing</NavLink>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavLink isSection sectionId="features">Features</NavLink>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavLink href="/about">About</NavLink>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavLink isSection sectionId="contact">Contact</NavLink>
+          </NavigationMenuItem>
+          {user && (
+            <NavigationMenuItem>
+              <NavLink href="/dashboard">Dashboard</NavLink>
+            </NavigationMenuItem>
+          )}
+          {isAdmin && user && (
+            <NavigationMenuItem>
+              <NavLink href="/admin">Admin</NavLink>
+            </NavigationMenuItem>
+          )}
+        </NavigationMenuList>
         
         <div className="hidden md:flex items-center space-x-4">
           {user ? (

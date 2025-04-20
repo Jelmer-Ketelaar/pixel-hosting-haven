@@ -34,18 +34,18 @@ const PricingCard: React.FC<PricingCardProps> = ({
   buttonText,
 }) => {
   return (
-    <Card className={`flex flex-col h-full border ${popular ? 'border-primary' : 'border-border'}`}>
+    <Card className={`flex flex-col h-full transform transition-all duration-300 hover:scale-[1.02] hover:shadow-lg ${popular ? 'border-primary shadow-md' : 'border-border'}`}>
       {popular && (
         <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-          <Badge variant="default" className="bg-primary text-primary-foreground">Most Popular</Badge>
+          <Badge variant="default" className="bg-primary text-primary-foreground font-medium px-3 py-1">Most Popular</Badge>
         </div>
       )}
       
-      <CardHeader className={`pb-8 pt-6 ${popular ? 'bg-primary/5' : ''}`}>
+      <CardHeader className={`pb-8 pt-6 ${popular ? 'bg-primary/5' : ''} rounded-t-lg`}>
         <div className="flex justify-between items-start mb-2">
           <div className="flex items-center">
             {icon && (
-              <div className="w-10 h-10 rounded-full bg-secondary/30 flex items-center justify-center mr-4">
+              <div className="w-12 h-12 rounded-full bg-secondary/30 flex items-center justify-center mr-4">
                 {icon}
               </div>
             )}
@@ -63,20 +63,20 @@ const PricingCard: React.FC<PricingCardProps> = ({
       </CardHeader>
       
       <CardContent className="flex-grow flex flex-col">
-        <div className="grid grid-cols-2 gap-x-4 gap-y-2 mb-6 text-sm">
-          <div>
+        <div className="grid grid-cols-2 gap-x-4 gap-y-2 mb-6 text-sm p-3 bg-secondary/30 rounded-lg">
+          <div className="p-2">
             <p className="text-muted-foreground">RAM</p>
             <p className="font-medium">{ram}</p>
           </div>
-          <div>
+          <div className="p-2">
             <p className="text-muted-foreground">CPU</p>
             <p className="font-medium">{cpu}</p>
           </div>
-          <div>
+          <div className="p-2">
             <p className="text-muted-foreground">Storage</p>
             <p className="font-medium">{storage}</p>
           </div>
-          <div>
+          <div className="p-2">
             <p className="text-muted-foreground">Players</p>
             <p className="font-medium">{players}</p>
           </div>
@@ -85,10 +85,12 @@ const PricingCard: React.FC<PricingCardProps> = ({
         <div className="space-y-3 mb-6 flex-grow">
           {features.map((feature, i) => (
             <div key={i} className="flex items-start">
-              <div className="mr-2 mt-0.5 text-primary">
-                {feature.available && <Check size={16} />}
+              <div className={`mr-2 mt-0.5 ${feature.available ? 'text-primary' : 'text-muted-foreground'}`}>
+                <Check size={16} className={feature.available ? 'opacity-100' : 'opacity-30'} />
               </div>
-              <span className="text-sm">{feature.title}</span>
+              <span className={`text-sm ${!feature.available ? 'text-muted-foreground' : ''}`}>
+                {feature.title}
+              </span>
             </div>
           ))}
         </div>

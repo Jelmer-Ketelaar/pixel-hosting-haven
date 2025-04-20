@@ -1,10 +1,12 @@
 
 import React, { useEffect, useRef } from 'react';
-import Button from './Button';
 import { ArrowRight, Server, Shield, Zap } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 const Hero: React.FC = () => {
   const heroRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
   
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -28,8 +30,28 @@ const Hero: React.FC = () => {
     };
     
     document.addEventListener('mousemove', handleMouseMove);
+    
+    // Add fade-in animation for elements
+    const animatedElements = document.querySelectorAll('.animate-on-load');
+    animatedElements.forEach((el, index) => {
+      setTimeout(() => {
+        (el as HTMLElement).classList.add('animate-fade-in');
+        (el as HTMLElement).classList.remove('opacity-0');
+      }, 100 * index);
+    });
+    
     return () => document.removeEventListener('mousemove', handleMouseMove);
   }, []);
+  
+  const scrollToSection = (sectionId: string) => {
+    const section = document.getElementById(sectionId);
+    if (section) {
+      window.scrollTo({
+        top: section.offsetTop - 80,
+        behavior: 'smooth'
+      });
+    }
+  };
   
   return (
     <section 
@@ -44,30 +66,39 @@ const Hero: React.FC = () => {
       </div>
       
       <div className="section-container relative z-10 flex flex-col items-center justify-center">
-        <div className="glass-effect mb-8 px-4 py-2 rounded-full flex items-center space-x-2 parallax" data-speed="0.15">
+        <div className="glass-effect mb-8 px-4 py-2 rounded-full flex items-center space-x-2 parallax animate-on-load opacity-0" data-speed="0.15">
           <span className="bg-primary/10 text-primary px-2 py-0.5 rounded-full text-sm font-medium">New</span>
           <span className="text-sm text-muted-foreground">High performance Minecraft servers with 99.9% uptime</span>
         </div>
         
-        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-center mb-6 tracking-tight parallax" data-speed="0.1">
+        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-center mb-6 tracking-tight parallax animate-on-load opacity-0" data-speed="0.1">
           Premium <span className="text-gradient">Minecraft</span><br /> Server Hosting
         </h1>
         
-        <p className="text-lg md:text-xl text-muted-foreground text-center max-w-3xl mb-10 parallax" data-speed="0.08">
+        <p className="text-lg md:text-xl text-muted-foreground text-center max-w-3xl mb-10 parallax animate-on-load opacity-0" data-speed="0.08">
           Lightning-fast servers with instant setup, premium hardware, DDoS protection, and 24/7 support. Start your adventure in just a few clicks.
         </p>
         
-        <div className="flex flex-col sm:flex-row gap-4 mb-16 parallax" data-speed="0.12">
-          <Button size="lg" rightIcon={<ArrowRight size={18} />}>
+        <div className="flex flex-col sm:flex-row gap-4 mb-16 parallax animate-on-load opacity-0" data-speed="0.12">
+          <Button 
+            size="lg" 
+            className="group"
+            onClick={() => scrollToSection('pricing')}
+          >
             Get Your Server
+            <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
           </Button>
-          <Button size="lg" variant="outline">
-            View Plans
+          <Button 
+            size="lg" 
+            variant="outline"
+            onClick={() => scrollToSection('features')}
+          >
+            Explore Features
           </Button>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full parallax" data-speed="0.06">
-          <div className="glass-effect p-6 rounded-xl text-center">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full parallax animate-on-load opacity-0" data-speed="0.06">
+          <div className="glass-effect p-6 rounded-xl text-center hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
             <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <Zap className="h-6 w-6 text-primary" />
             </div>
@@ -75,7 +106,7 @@ const Hero: React.FC = () => {
             <p className="text-muted-foreground text-sm">Your server is ready in less than 60 seconds.</p>
           </div>
           
-          <div className="glass-effect p-6 rounded-xl text-center">
+          <div className="glass-effect p-6 rounded-xl text-center hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
             <div className="w-12 h-12 bg-minecraft-green/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <Server className="h-6 w-6 text-minecraft-green" />
             </div>
@@ -83,7 +114,7 @@ const Hero: React.FC = () => {
             <p className="text-muted-foreground text-sm">NVMe SSD storage and high-frequency processors.</p>
           </div>
           
-          <div className="glass-effect p-6 rounded-xl text-center">
+          <div className="glass-effect p-6 rounded-xl text-center hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
             <div className="w-12 h-12 bg-minecraft-purple/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <Shield className="h-6 w-6 text-minecraft-purple" />
             </div>
