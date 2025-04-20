@@ -1,14 +1,13 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronUp } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 
 const ScrollToTop: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   // Show button when page is scrolled down
   const toggleVisibility = () => {
-    if (window.pageYOffset > 300) {
+    if (window.pageYOffset > 400) {
       setIsVisible(true);
     } else {
       setIsVisible(false);
@@ -18,13 +17,10 @@ const ScrollToTop: React.FC = () => {
   // Set the scroll event listener
   useEffect(() => {
     window.addEventListener('scroll', toggleVisibility);
-    
-    return () => {
-      window.removeEventListener('scroll', toggleVisibility);
-    };
+    return () => window.removeEventListener('scroll', toggleVisibility);
   }, []);
 
-  // Scroll to top handler
+  // Scroll to top function
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -33,16 +29,14 @@ const ScrollToTop: React.FC = () => {
   };
 
   return (
-    <div className={`fixed bottom-8 right-8 z-50 transition-opacity duration-300 ${isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-      <Button 
-        variant="outline" 
-        size="icon" 
-        onClick={scrollToTop} 
-        className="h-10 w-10 rounded-full bg-background/80 backdrop-blur-sm border-border shadow-md hover:shadow-lg"
+    <div className={`scroll-to-top ${isVisible ? 'visible' : ''}`}>
+      <button
+        onClick={scrollToTop}
+        aria-label="Scroll to top"
+        className="button-animation"
       >
-        <ChevronUp size={20} />
-        <span className="sr-only">Scroll to top</span>
-      </Button>
+        <ChevronUp size={24} />
+      </button>
     </div>
   );
 };

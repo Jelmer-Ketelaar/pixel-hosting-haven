@@ -107,7 +107,7 @@ const Navbar: React.FC = () => {
     >
       <div className="container mx-auto max-w-7xl px-6 flex justify-between items-center">
         <Link to="/" className="flex items-center space-x-2">
-          <span className="text-2xl font-bold">PixelHost</span>
+          <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600">PixelHost</span>
         </Link>
         
         <NavigationMenu className="hidden md:flex">
@@ -165,7 +165,7 @@ const Navbar: React.FC = () => {
                 <Button variant="ghost" size="sm">Login</Button>
               </Link>
               <Link to="/auth">
-                <Button>Get Started</Button>
+                <Button className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white">Get Started</Button>
               </Link>
             </>
           )}
@@ -182,7 +182,7 @@ const Navbar: React.FC = () => {
       
       {/* Mobile menu */}
       <div 
-        className={`md:hidden absolute w-full bg-background border-b border-border transition-all duration-300 ease-in-out ${
+        className={`md:hidden absolute w-full bg-background/95 backdrop-blur-sm border-b border-border transition-all duration-300 ease-in-out ${
           isMenuOpen ? 'max-h-screen opacity-100 visible' : 'max-h-0 opacity-0 invisible'
         }`}
       >
@@ -195,7 +195,7 @@ const Navbar: React.FC = () => {
           {user && <Link to="/dashboard" className="block py-2 hover:text-primary" onClick={() => setIsMenuOpen(false)}>Dashboard</Link>}
           {isAdmin && user && <Link to="/admin" className="block py-2 hover:text-primary" onClick={() => setIsMenuOpen(false)}>Admin</Link>}
           
-          <div className="flex flex-col space-y-2 pt-2">
+          <div className="flex flex-col space-y-2 pt-2 border-t border-border/50">
             {user ? (
               <>
                 <Link to="/dashboard" onClick={() => setIsMenuOpen(false)}>
@@ -206,7 +206,7 @@ const Navbar: React.FC = () => {
                     <Button variant="outline" className="w-full">Admin Panel</Button>
                   </Link>
                 )}
-                <Button className="w-full" onClick={() => {
+                <Button className="w-full bg-gradient-to-r from-primary to-purple-600" onClick={() => {
                   signOut();
                   setIsMenuOpen(false);
                 }}>
@@ -219,7 +219,7 @@ const Navbar: React.FC = () => {
                   <Button variant="outline" className="w-full">Login</Button>
                 </Link>
                 <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
-                  <Button className="w-full">Get Started</Button>
+                  <Button className="w-full bg-gradient-to-r from-primary to-purple-600">Get Started</Button>
                 </Link>
               </>
             )}

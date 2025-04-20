@@ -19,7 +19,7 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
 }) => {
   return (
     <div className={cn(
-      "glass-effect p-6 rounded-xl hover:scale-[1.02] transition-all duration-300",
+      "glass-effect p-6 rounded-xl hover:scale-[1.02] transition-all duration-300 border border-white/10",
       className
     )}>
       <div className={cn(
