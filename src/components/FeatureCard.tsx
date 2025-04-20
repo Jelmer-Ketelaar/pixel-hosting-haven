@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
+import DOMPurify from 'dompurify';
 
 interface FeatureCardProps {
   title: string;
@@ -17,17 +18,9 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
   className,
   iconClassName
 }) => {
-  // Sanitize inputs to prevent XSS attacks
+  // Enhanced sanitization using DOMPurify
   const sanitizeText = (text: string) => {
-    return text.replace(/[&<>"']/g, function(match) {
-      return {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;'
-      }[match] || match;
-    });
+    return DOMPurify.sanitize(text, { USE_PROFILES: { html: false } });
   };
 
   const sanitizedTitle = sanitizeText(title);
@@ -39,6 +32,7 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
         "glass-effect p-6 rounded-xl transition-all duration-300 border border-white/10 hover:shadow-lg hover:translate-y-[-4px]",
         className
       )}
+      data-testid="feature-card"
     >
       <div 
         className={cn(
@@ -48,8 +42,8 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
       >
         {icon}
       </div>
-      <h3 className="text-xl font-semibold mb-2">{sanitizedTitle}</h3>
-      <p className="text-muted-foreground">{sanitizedDescription}</p>
+      <h3 className="text-xl font-semibold mb-2" dangerouslySetInnerHTML={{ __html: sanitizedTitle }} />
+      <p className="text-muted-foreground" dangerouslySetInnerHTML={{ __html: sanitizedDescription }} />
     </div>
   );
 };
