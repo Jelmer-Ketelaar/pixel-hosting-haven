@@ -1,11 +1,11 @@
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ShieldCheck } from 'lucide-react';
 
 interface PaymentButtonProps {
   planName: string;
@@ -21,10 +21,23 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
   className
 }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [paymentAttempts, setPaymentAttempts] = useState(0);
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const handlePayment = async () => {
+  // Rate limiting for payment attempts
+  const isRateLimited = paymentAttempts > 5;
+
+  const handlePayment = useCallback(async () => {
+    if (isRateLimited) {
+      toast({
+        title: "Too many attempts",
+        description: "Please wait a few minutes before trying again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (!user) {
       // User needs to sign in first
       navigate('/auth');
@@ -32,6 +45,7 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
     }
 
     setIsLoading(true);
+    setPaymentAttempts(prev => prev + 1);
 
     try {
       // Get the session for the logged-in user
@@ -41,9 +55,16 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
         throw new Error('Authentication required');
       }
 
+      // Add security token to the request
+      const securityToken = btoa(new Date().getTime().toString());
+      
       // Call the Supabase edge function to create a Stripe checkout session
       const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: { planName, planPrice },
+        body: { 
+          planName, 
+          planPrice,
+          securityToken
+        },
       });
 
       if (error) {
@@ -66,21 +87,29 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [user, planName, planPrice, navigate, isRateLimited]);
 
   return (
     <Button 
       onClick={handlePayment} 
-      disabled={isLoading}
-      className={className}
+      disabled={isLoading || isRateLimited}
+      className={`${className} relative overflow-hidden`}
     >
       {isLoading ? (
         <>
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           Processing...
         </>
+      ) : isRateLimited ? (
+        <>
+          <ShieldCheck className="mr-2 h-4 w-4" />
+          Try again later
+        </>
       ) : (
-        buttonText
+        <>
+          {buttonText}
+          <span className="absolute inset-0 bg-gradient-to-r from-primary/20 to-purple-600/20 animate-pulse-light opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+        </>
       )}
     </Button>
   );

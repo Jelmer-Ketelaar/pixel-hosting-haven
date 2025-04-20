@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -8,6 +8,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   isLoading?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
+  protected?: boolean;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -18,9 +19,39 @@ const Button: React.FC<ButtonProps> = ({
   isLoading = false,
   leftIcon,
   rightIcon,
+  protected: isProtected = false,
   ...props
 }) => {
-  const baseClasses = 'inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium ring-offset-background transition-all duration-300 button-animation focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50';
+  const [clickCount, setClickCount] = useState(0);
+  const [lastClickTime, setLastClickTime] = useState(0);
+  
+  // Rate limiting for rapid clicks
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const now = Date.now();
+    
+    // Prevent extremely rapid clicks (potential attack)
+    if (now - lastClickTime < 100) {
+      e.preventDefault();
+      return;
+    }
+    
+    setLastClickTime(now);
+    setClickCount(prev => prev + 1);
+    
+    // Reset click count after 2 seconds
+    setTimeout(() => setClickCount(0), 2000);
+    
+    // Allow normal click if not rate limited
+    if (clickCount < 10 && props.onClick) {
+      props.onClick(e);
+    } else if (clickCount >= 10) {
+      e.preventDefault();
+      // Rate limited, prevent action
+      console.warn('Button action rate limited');
+    }
+  };
+  
+  const baseClasses = 'inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium ring-offset-background transition-all duration-300 button-animation focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 relative overflow-hidden';
   
   const variantClasses = {
     primary: 'bg-primary text-primary-foreground hover:bg-primary/90',
@@ -41,9 +72,12 @@ const Button: React.FC<ButtonProps> = ({
         baseClasses,
         variantClasses[variant],
         sizeClasses[size],
+        isProtected ? 'after:content-[""] after:absolute after:inset-0 after:bg-transparent after:pointer-events-none hover:after:bg-white/5' : '',
         className
       )}
-      disabled={isLoading || props.disabled}
+      disabled={isLoading || clickCount >= 10 || props.disabled}
+      onClick={handleClick}
+      aria-busy={isLoading}
       {...props}
     >
       {isLoading && (
@@ -53,8 +87,11 @@ const Button: React.FC<ButtonProps> = ({
         </svg>
       )}
       {!isLoading && leftIcon && <span className="mr-2">{leftIcon}</span>}
-      {children}
+      <span className="relative z-10">{children}</span>
       {!isLoading && rightIcon && <span className="ml-2">{rightIcon}</span>}
+      
+      {/* Add ripple effect */}
+      <span className="absolute inset-0 bg-white/10 opacity-0 transition-opacity duration-300 hover:opacity-100"></span>
     </button>
   );
 };
