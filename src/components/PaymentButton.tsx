@@ -105,6 +105,7 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
       requestTimeoutRef.current = timeoutId;
       
       // Call the Supabase edge function to create a Stripe checkout session
+      // Fix: Remove the 'signal' property as it's not supported in FunctionInvokeOptions
       const { data, error } = await supabase.functions.invoke('create-checkout', {
         body: { 
           planName, 
@@ -113,8 +114,7 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
           requestId,
           timestamp,
           signature
-        },
-        signal: abortController.signal
+        }
       });
 
       clearTimeout(timeoutId);
