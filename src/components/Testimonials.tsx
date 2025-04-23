@@ -36,13 +36,13 @@ const Testimonials: React.FC = () => {
   }, []);
   
   return (
-    <section id="testimonials" ref={testimonialsRef} className="section-container">
+    <section id="testimonials" ref={testimonialsRef} className="section-container bg-background">
       <div className="text-center mb-16">
-        <div className="inline-block glass-effect px-4 py-1.5 rounded-full text-sm font-medium mb-4">
+        <div className="inline-block glass-effect px-4 py-1.5 rounded-full text-sm font-medium mb-4 text-foreground">
           Testimonials
         </div>
-        <h2 className="section-title">What Our Customers <span className="text-gradient">Say</span></h2>
-        <p className="section-subtitle">
+        <h2 className="section-title text-foreground">What Our Customers <span className="text-gradient">Say</span></h2>
+        <p className="section-subtitle text-foreground">
           Join thousands of satisfied server owners who trust PixelHost for their Minecraft communities.
         </p>
       </div>

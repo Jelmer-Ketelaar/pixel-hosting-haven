@@ -43,8 +43,41 @@
   color: #888;
 }
 
-/* Text visibility fixes */
+/* Enhanced Text visibility fixes */
 * {
   color: inherit;
 }
 
+/* Increase text contrast */
+p, h1, h2, h3, h4, h5, h6, span, div {
+  color: inherit;
+  text-shadow: 0 0 1px rgba(0,0,0,0.05);
+}
+
+/* Ensure glass components have readable text */
+.glass-effect {
+  color: hsl(var(--foreground));
+}
+
+/* Force darker text on light backgrounds */
+.bg-background p,
+.bg-background h1,
+.bg-background h2,
+.bg-background h3,
+.bg-background h4,
+.bg-background h5,
+.bg-background h6 {
+  color: hsl(var(--foreground));
+}
+
+/* Ensure features and testimonials text is visible */
+#features,
+#testimonials {
+  color: hsl(var(--foreground));
+}
+
+/* Increase button text contrast */
+button {
+  color: inherit;
+  font-weight: 500;
+}

@@ -35,10 +35,10 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
           />
         ))}
       </div>
-      <blockquote className="mb-4 text-md italic">"{quote}"</blockquote>
+      <blockquote className="mb-4 text-md italic text-foreground">"{quote}"</blockquote>
       <div>
-        <p className="font-semibold">{author}</p>
-        <p className="text-sm text-muted-foreground">{role}</p>
+        <p className="font-semibold text-foreground">{author}</p>
+        <p className="text-sm text-foreground opacity-75">{role}</p>
       </div>
     </div>
   );

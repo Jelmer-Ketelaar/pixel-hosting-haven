@@ -97,7 +97,7 @@ const Features: React.FC = () => {
   }
   
   return (
-    <section id="features" ref={featuresRef} className="section-container relative">
+    <section id="features" ref={featuresRef} className="section-container relative bg-background">
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-background/90 to-background -z-10"></div>
       
@@ -105,8 +105,8 @@ const Features: React.FC = () => {
         <div className="inline-block glass-effect px-4 py-1.5 rounded-full text-sm font-medium mb-4 border border-white/10">
           Powerful Features
         </div>
-        <h2 className="section-title">Why Choose <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600">PixelHost</span></h2>
-        <p className="section-subtitle">
+        <h2 className="section-title text-foreground">Why Choose <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600">PixelHost</span></h2>
+        <p className="section-subtitle text-foreground">
           Our Minecraft server hosting is designed to provide you with the best performance, reliability, and user experience.
         </p>
       </div>

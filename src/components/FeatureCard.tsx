@@ -42,8 +42,8 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
       >
         {icon}
       </div>
-      <h3 className="text-xl font-semibold mb-2" dangerouslySetInnerHTML={{ __html: sanitizedTitle }} />
-      <p className="text-muted-foreground" dangerouslySetInnerHTML={{ __html: sanitizedDescription }} />
+      <h3 className="text-xl font-semibold mb-2 text-foreground" dangerouslySetInnerHTML={{ __html: sanitizedTitle }} />
+      <p className="text-foreground" dangerouslySetInnerHTML={{ __html: sanitizedDescription }} />
     </div>
   );
 };
