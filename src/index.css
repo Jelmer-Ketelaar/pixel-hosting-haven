@@ -93,10 +93,16 @@
 
   body {
     @apply bg-background text-foreground font-sans antialiased scroll-smooth;
+    color: hsl(var(--foreground));
   }
   
   h1, h2, h3, h4, h5, h6 {
     @apply font-sans tracking-tight;
+    color: hsl(var(--foreground));
+  }
+
+  p {
+    color: hsl(var(--foreground));
   }
 }
 
@@ -111,6 +117,7 @@
   
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600;
+    color: hsl(var(--primary));
   }
   
   .navbar-link {
@@ -253,4 +260,29 @@ html {
 .scroll-to-top button:hover {
   transform: translateY(-3px);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Fix any potential text visibility issues in glass components */
+.glass-effect p,
+.glass-effect h1,
+.glass-effect h2,
+.glass-effect h3,
+.glass-effect h4,
+.glass-effect h5,
+.glass-effect h6,
+.glass-effect span {
+  color: hsl(var(--foreground));
+  text-shadow: 0 0 1px rgba(0,0,0,0.1);
+}
+
+/* Improve text visibility on cards */
+.testimonial-card blockquote,
+.testimonial-card p {
+  color: hsl(var(--foreground));
+}
+
+/* Fix any text visibility issues within buttons */
+button, 
+.button {
+  color: inherit;
 }

@@ -1,3 +1,4 @@
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -35,8 +36,15 @@
 
 .card {
   padding: 2em;
+  color: inherit; /* Ensure text is visible */
 }
 
 .read-the-docs {
   color: #888;
 }
+
+/* Text visibility fixes */
+* {
+  color: inherit;
+}
+
